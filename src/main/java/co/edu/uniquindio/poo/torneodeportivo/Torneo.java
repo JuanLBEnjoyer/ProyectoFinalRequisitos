@@ -25,20 +25,21 @@ public class Torneo {
     private final int valorInscripcion;
     private final TipoTorneo tipoTorneo;
     private final Collection<Equipo> equipos;
+    private  Genero generoTorneo;
+    private Juez juez;
+    private final Collection<Enfrentamiento> enfrentamientos;
 
     public Torneo(String nombre, LocalDate fechaInicio,
             LocalDate fechaInicioInscripciones,
             LocalDate fechaCierreInscripciones, byte numeroParticipantes,
-            byte limiteEdad, int valorInscripcion,TipoTorneo tipoTorneo) {
+            byte limiteEdad, int valorInscripcion,TipoTorneo tipoTorneo, Genero generoTorneo, Juez juez) {
         
         ASSERTION.assertion( nombre != null , "El nombre es requerido");
-        
-        
-        
+        ASSERTION.assertion(generoTorneo != null, "Debe añadir un genero al torneo");
         ASSERTION.assertion( numeroParticipantes >= 0, "El número de participantes no puede ser negativo");
         ASSERTION.assertion( limiteEdad >= 0,"El limite de edad no puede ser negativo");
         ASSERTION.assertion( valorInscripcion >= 0,"El valor de la inscripción no puede ser negativo");
-        
+        ASSERTION.assertion(juez != null, "Debe añadir al menos un juez al torneo");
         
         this.nombre = nombre;
         
@@ -50,6 +51,9 @@ public class Torneo {
         this.valorInscripcion = valorInscripcion;
         this.tipoTorneo = tipoTorneo;
         this.equipos = new LinkedList<>();
+        this.enfrentamientos=new LinkedList<>();
+        this.generoTorneo=generoTorneo;
+        this.juez=juez;
     }
 
     public String getNombre() {
@@ -84,6 +88,18 @@ public class Torneo {
         return tipoTorneo;
     }
 
+    public Juez getJuez(){
+        return juez;
+    }
+
+    public Genero getGeneroTorneo(){
+        return generoTorneo;
+    }
+
+    public Collection<Enfrentamiento> getEnfrentamientos(){
+        return enfrentamientos;
+    }
+
     public void setFechaInicio(LocalDate fechaInicio) {
         ASSERTION.assertion( fechaInicio != null , "La fecha de inicio es requerida");
         ASSERTION.assertion( ( fechaInicioInscripciones == null || fechaInicio.isAfter(fechaInicioInscripciones) ) &&
@@ -109,11 +125,24 @@ public class Torneo {
      * @throws Se genera un error si ya existe un equipo registrado con el mismo nombre, o en caso de que las inscripciones del torneo no esten abiertas.
      */
     public void registrarEquipo(Equipo equipo) {
+
+        validarGeneroEquipo(equipo);
+
         validarEquipoExiste(equipo); 
 
         validarInscripciopnesAbiertas(); 
 
         equipos.add(equipo);
+    }
+
+    public Optional<Jugador> encontrarGeneroEquipo(Equipo equipo){
+        return equipo.jugadores().stream().filter( j-> generoTorneo.esValido(j)).findAny();
+        
+    }
+
+    public void validarGeneroEquipo(Equipo equipo){
+        boolean jugadorGenero = encontrarGeneroEquipo(equipo).isPresent();
+        ASSERTION.assertion(!jugadorGenero,"Jugador con genero diferente al del torneo encontrado");
     }
 
     /**
