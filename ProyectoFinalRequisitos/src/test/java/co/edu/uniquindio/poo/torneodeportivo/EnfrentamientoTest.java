@@ -47,12 +47,12 @@ public class EnfrentamientoTest {
     public void datosCompletos(){
             System.out.println("Inciando el test datos completos");
             Juez juez1 = new Juez("12345","Santiago","Guevara","santiagoG@gmail.com","3229882323");
-            Torneo torneo = new  Torneo("Olimpiadas", LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(5), (byte)4, (byte)15, 5000, TipoTorneo.LOCAL, Genero.MIXTO,juez1);
+            Torneo torneo = new  Torneo("Olimpiadas", LocalDate.now().plusDays(20), LocalDate.now().plusDays(5), LocalDate.now().plusDays(8), (byte)4, (byte)15, 5000, TipoTorneo.LOCAL, Genero.MIXTO,juez1);
             var representante2 = new Persona("Elkn", "Vidales", "234@gmail.com", "3145264879");
             var representante3 = new Persona("Juan", "Pablo", "345@hotmail.com", "3154895577");
             Equipo equipo3 = new Equipo("Tigres del Este", representante3,new LinkedList<>() ,GeneroEquipo.FEMENINO);
             Equipo equipo4 = new Equipo("Tigres del Oeste", representante2,new LinkedList<>(),GeneroEquipo.MASCULINO);
-            var enfrentamiento1 = new Enfrentamiento("Juego Importante" ,"Armenia", LocalDate.now().plusDays(13), LocalDateTime.now(), equipo3, equipo4);
+            Enfrentamiento enfrentamiento1 = new Enfrentamiento("Juego Importante" ,"Armenia", LocalDate.now().plusDays(11), LocalDateTime.now(), equipo3, equipo4);
             torneo.registrarEnfrentamiento(enfrentamiento1);
             torneo.registrarEquipo(equipo4);
             torneo.registrarEquipo(equipo3);
@@ -118,13 +118,17 @@ public class EnfrentamientoTest {
         var representante3 = new Persona("Juan", "Pablo", "345@hotmail.com", "3154895577");
         Equipo equipo3 = new Equipo("Tigres del Este", representante3,new LinkedList<>() ,GeneroEquipo.FEMENINO);
         Equipo equipo4 = new Equipo("Tigres del Oeste", representante2,new LinkedList<>(),GeneroEquipo.MASCULINO);
-        var enfrentamiento1 = new Enfrentamiento("Juego Importante" ,"Armenia", LocalDate.now().plusDays(11), LocalDateTime.now(), equipo3, equipo4);
+        var enfrentamiento1 = new Enfrentamiento("Juego Importante" ,"Armenia", LocalDate.of(2024,12,2), LocalDateTime.now(), equipo3, equipo4);
+        var enfrentamiento2 = new Enfrentamiento("Juego" ,"Armenia", LocalDate.now().plusDays(15), LocalDateTime.now(), equipo4, equipo3);
         torneo.registrarEnfrentamiento(enfrentamiento1);
+        torneo.registrarEnfrentamiento(enfrentamiento2);
+      
         torneo.registrarEquipo(equipo4);
         torneo.registrarEquipo(equipo3);
-        enfrentamiento1.registrarJuez(juez1);        
-        Collection<Enfrentamiento> enfrentamientosJuez = torneo.listaJuezEnfrentamiento("12345");
-        assertEquals(1, enfrentamientosJuez.size());
+        enfrentamiento1.registrarJuez(juez1);
+        enfrentamiento2.registrarJuez(juez1);        
+        Collection<Enfrentamiento> enfrentamientoJuez2 = torneo.listaJuezEnfrentamientos("12345");
+        assertEquals(2,enfrentamientoJuez2.size());
         System.out.println("Finalizando el test buscar enfrentamiento por licencia de juez");
     }
 

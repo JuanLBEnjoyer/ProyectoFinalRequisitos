@@ -42,6 +42,7 @@ public class Enfrentamiento{
         this.fechaHora=fechaHora;
         this.estado= Estado.PENDIENTE; 
         this.nombre=nombre;
+        this.jueces = new LinkedList<>();
         this.fechaEnfrentamiento=fechaEnfrentamiento;   
         this.equipoLocal=equipoLocal;
         this.equipoVisitante=equipoVisitante;

@@ -17,7 +17,7 @@ import static co.edu.uniquindio.poo.util.AssertionUtil.ASSERTION;
 
 public class Torneo {
     private final String nombre;
-    private static LocalDate fechaInicio;
+    private LocalDate fechaInicio;
     private LocalDate fechaInicioInscripciones;
     private LocalDate fechaCierreInscripciones;
     private final byte numeroParticipantes;
@@ -62,7 +62,7 @@ public class Torneo {
         return nombre;
     }
 
-    public static LocalDate getFechaInicio() {
+    public LocalDate getFechaInicio() {
         return fechaInicio;
     }
 
@@ -235,8 +235,14 @@ public class Torneo {
         ASSERTION.assertion( limiteEdad == 0 || limiteEdad >= edadAlInicioTorneo , "No se pueden registrar jugadores que excedan el limite de edad del torneo"); 
     }
 
-    public void registrarEnfrentamiento(Enfrentamiento enfrentamiento){ 
-        enfrentamientos.add(enfrentamiento);
+    public void validarFechaEnfrentamiento(Enfrentamiento enfrentamiento){
+        boolean valdidar = enfrentamiento.getFechaEnfrentamiento().isAfter(fechaInicio);
+        ASSERTION.assertion(valdidar,"La fecha del enfrentamiento es antes de la fecha  de inicio del torneo");
+    }
+
+    public void registrarEnfrentamiento(Enfrentamiento enfrentamiento1){    
+        validarFechaEnfrentamiento(enfrentamiento1);
+        enfrentamientos.add(enfrentamiento1);
     }
 
     public Optional<Enfrentamiento> buscarEnfrentamientoEquipo(String nombreEquipo){
@@ -251,19 +257,12 @@ public class Torneo {
         enfrentamientosEquipo.add(buscar.get());
         return enfrentamientosEquipo;
     }
-    
-    public Collection<Enfrentamiento> listaJuezEnfrentamiento(String licenciaJuez){
-        Collection<Enfrentamiento> enfrentamientosJuez = new LinkedList<>();
-        for(Enfrentamiento enfrentamiento : enfrentamientos){
-            for(Juez juez : enfrentamiento.getJueces()){
-                if(juez.licencia().equals(licenciaJuez)){
-                    enfrentamientosJuez.add(enfrentamiento);
-                }
-            }
-        }
-        return enfrentamientosJuez;
-    }
 
+    public Collection<Enfrentamiento> listaJuezEnfrentamientos(String licenciaJuez){
+        Predicate<Enfrentamiento> condicion = e -> e.getJueces().stream().anyMatch(j->j.licencia().equals(licenciaJuez));
+        return enfrentamientos.stream().filter(condicion).toList();
+    }
+    
     public Collection<Enfrentamiento> listadoVictoriasPerdidasEmpates(Equipo equipo){
         buscarEnfrentamientoEquipo(equipo.getNombre());
         Collection<Enfrentamiento> listado = new LinkedList<>();
