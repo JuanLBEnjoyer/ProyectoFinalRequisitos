@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public class Enfrentamiento{
     private final String nombre;
@@ -44,7 +42,6 @@ public class Enfrentamiento{
         this.fechaHora=fechaHora;
         this.estado= Estado.PENDIENTE; 
         this.nombre=nombre;
-        this.jueces = new LinkedList<>();
         this.fechaEnfrentamiento=fechaEnfrentamiento;   
         this.equipoLocal=equipoLocal;
         this.equipoVisitante=equipoVisitante;
@@ -101,36 +98,14 @@ public class Enfrentamiento{
         this.estado = estado;
     }
 
-    public void EnfrentamientoEstado() {
-        if (LocalDateTime.now().isAfter(fechaHora)) {
-            setEstado (Estado.ENJUEGO);
-        } else {
-            if (LocalDateTime.now().isBefore(fechaHora)) {
-            setEstado(Estado.PENDIENTE);    
-            }
-            else {
-                setEstado (Estado.APLAZADO);
-            }
-
-        }
-
+    public void setEquipoLocal(Equipo equipo){
+        assert equipo != null;
+        this.equipoLocal=equipo;
     }
-
 
     public void registrarJuez(Juez juez){
         assert juez != null;
-        validarJuez(juez);
         jueces.add(juez);
-    }
-
-    public Optional<Juez> buscarJuez(Juez juez){
-        Predicate<Juez> condicion = j->j.licencia().equals(juez.licencia());
-        return jueces.stream().filter(condicion).findAny();
-    }
-
-    public void validarJuez(Juez juez){
-        boolean juezEncontrar = buscarJuez(juez).isPresent();
-        ASSERTION.assertion(!juezEncontrar,"Juez con misma licencia encontrado");
     }
 
     public void setResultado(byte puntosEquipoLocal, byte puntosEquipoVisitante){
@@ -139,21 +114,5 @@ public class Enfrentamiento{
         
     } 
 
-    public void finalizarEnfrentamiento(byte puntosLocal, byte puntosVisitante) {
-        setResultado(puntosLocal, puntosVisitante);
-        estado = Estado.FINALIZADO;
-        if(getPuntosLocal()>getPuntosVisitante()){
-            equipoLocal.setVictorias((byte) +1);
-            equipoVisitante.setPerdidas((byte) +1);}
-        else{
-            if(getPuntosLocal()<getPuntosVisitante()){
-                equipoLocal.setPerdidas((byte) +1);
-                equipoVisitante.setVictorias((byte) +1);}
-                else{
-                    equipoLocal.setEmpates((byte)+1);
-                    equipoVisitante.setEmpates((byte)+1);}
-            }   
-    }
-    
 
 }

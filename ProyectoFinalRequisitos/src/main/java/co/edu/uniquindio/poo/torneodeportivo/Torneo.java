@@ -17,7 +17,7 @@ import static co.edu.uniquindio.poo.util.AssertionUtil.ASSERTION;
 
 public class Torneo {
     private final String nombre;
-    private LocalDate fechaInicio;
+    private static LocalDate fechaInicio;
     private LocalDate fechaInicioInscripciones;
     private LocalDate fechaCierreInscripciones;
     private final byte numeroParticipantes;
@@ -54,6 +54,8 @@ public class Torneo {
         this.enfrentamientos=new LinkedList<>();
         this.generoTorneo=generoTorneo;
         this.juez=juez;
+        this.fechaCierreInscripciones=fechaCierreInscripciones;
+        this.fechaInicioInscripciones=fechaInicioInscripciones;
     }
 
 
@@ -62,7 +64,7 @@ public class Torneo {
         return nombre;
     }
 
-    public LocalDate getFechaInicio() {
+    public static LocalDate getFechaInicio() {
         return fechaInicio;
     }
 
@@ -235,8 +237,39 @@ public class Torneo {
         ASSERTION.assertion( limiteEdad == 0 || limiteEdad >= edadAlInicioTorneo , "No se pueden registrar jugadores que excedan el limite de edad del torneo"); 
     }
 
-    public void registrarEnfrentamiento(Enfrentamiento enfrentamiento1){    
-        enfrentamientos.add(enfrentamiento1);
+    public void registrarEnfrentamiento(Enfrentamiento enfrentamiento){ 
+        enfrentamientos.add(enfrentamiento);
+    }
+
+    public void EnfrentamientoEstado(Enfrentamiento enfrentamiento, Torneo torneo) {
+        if (enfrentamiento.getFechaEnfrentamiento().isAfter(Torneo.getFechaInicio())) {
+            enfrentamiento.setEstado(Estado.ENJUEGO);
+        } else {
+            if (enfrentamiento.getFechaEnfrentamiento().isBefore(Torneo.getFechaInicio())) {
+                enfrentamiento.setEstado(Estado.PENDIENTE);    
+            }
+            else {
+                enfrentamiento.setEstado (Estado.APLAZADO);
+            }
+
+        }
+
+    }
+
+    public void finalizarEnfrentamiento(byte puntosLocal, byte puntosVisitante, Enfrentamiento enfrentamiento) {
+        enfrentamiento.setResultado(puntosLocal, puntosVisitante);
+        enfrentamiento.setEstado(Estado.FINALIZADO);
+        if(enfrentamiento.getPuntosLocal()>enfrentamiento.getPuntosVisitante()){
+            enfrentamiento.getEquipoLocal().setVictorias((byte) +1);
+            enfrentamiento.getEquipoVisitante().setPerdidas((byte) +1);}
+        else{
+            if(enfrentamiento.getPuntosLocal()<enfrentamiento.getPuntosVisitante()){
+                enfrentamiento.getEquipoLocal().setPerdidas((byte) +1);
+                enfrentamiento.getEquipoVisitante().setVictorias((byte) +1);}
+                else{
+                    enfrentamiento.getEquipoLocal().setEmpates((byte)+1);
+                    enfrentamiento.getEquipoVisitante().setEmpates((byte)+1);}
+            }   
     }
 
     public Optional<Enfrentamiento> buscarEnfrentamientoEquipo(String nombreEquipo){
@@ -251,17 +284,19 @@ public class Torneo {
         enfrentamientosEquipo.add(buscar.get());
         return enfrentamientosEquipo;
     }
-
+    
     public Collection<Enfrentamiento> listaJuezEnfrentamientos(String licenciaJuez){
         Predicate<Enfrentamiento> condicion = e -> e.getJueces().stream().anyMatch(j->j.licencia().equals(licenciaJuez));
         return enfrentamientos.stream().filter(condicion).toList();
     }
-    
+
     public Collection<Enfrentamiento> listadoVictoriasPerdidasEmpates(Equipo equipo){
         buscarEnfrentamientoEquipo(equipo.getNombre());
-        Collection<Enfrentamiento> listado = new LinkedList<>();
-
         
+        Collection<Enfrentamiento> listado = new LinkedList<>();
+        for(Enfrentamiento enfrentamiento: enfrentamientos){
+            listado.add(enfrentamiento);
+        }
         return listado;
     }
 }
