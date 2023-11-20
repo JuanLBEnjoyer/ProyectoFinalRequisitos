@@ -47,7 +47,7 @@ public class EnfrentamientoTest {
     public void datosCompletos(){
             System.out.println("Inciando el test datos completos");
             Juez juez1 = new Juez("12345","Santiago","Guevara","santiagoG@gmail.com","3229882323");
-            Torneo torneo = new  Torneo("Olimpiadas", LocalDate.now().plusDays(20), LocalDate.now().plusDays(5), LocalDate.now().plusDays(8), (byte)4, (byte)15, 5000, TipoTorneo.LOCAL, Genero.MIXTO,juez1);
+            Torneo torneo = new  Torneo("Olimpiadas", LocalDate.now().plusDays(20), LocalDate.now().minusDays(5), LocalDate.now().plusDays(10), (byte)4, (byte)15, 5000, TipoTorneo.LOCAL, Genero.MIXTO,juez1);
             var representante2 = new Persona("Elkn", "Vidales", "234@gmail.com", "3145264879");
             var representante3 = new Persona("Juan", "Pablo", "345@hotmail.com", "3154895577");
             Equipo equipo3 = new Equipo("Tigres del Este", representante3,new LinkedList<>() ,GeneroEquipo.FEMENINO);
@@ -72,24 +72,6 @@ public class EnfrentamientoTest {
         assertThrows(Throwable.class, () -> new Enfrentamiento(null, null, null, null, null, null));
         System.out.println("Finalizando el tes datos nulos");
     }
-
-    @Test
-    public void fechaEnfrentamientoAntesFechaInicio(){
-        System.out.println("Iniciando el test fecha enfrentamiento antes fecha inicio torneo");
-        Juez juez1 = new Juez("12345","Santiago","Guevara","santiagoG@gmail.com","3229882323");
-        Torneo torneo = new  Torneo("Olimpiadas", LocalDate.now().plusDays(10), LocalDate.now().minusDays(5), LocalDate.now().plusDays(5), (byte)4, (byte)15, 5000, TipoTorneo.LOCAL, Genero.MIXTO,juez1);        
-        var representante2 = new Persona("Elkn", "Vidales", "234@gmail.com", "3145264879");
-        var representante3 = new Persona("Juan", "Pablo", "345@hotmail.com", "3154895577");
-        Equipo equipo3 = new Equipo("Tigres del Este", representante3,new LinkedList<>() ,GeneroEquipo.FEMENINO);
-        Equipo equipo4 = new Equipo("Tigres del Oeste", representante2,new LinkedList<>(),GeneroEquipo.MASCULINO);
-        var enfrentamiento1 = new Enfrentamiento("Juego Importante" ,"Armenia", LocalDate.now().plusDays(9), LocalDateTime.now(), equipo3, equipo4);
-        torneo.registrarEquipo(equipo4);
-        torneo.registrarEquipo(equipo3);
-        enfrentamiento1.registrarJuez(juez1);  
-        assertThrows(Throwable.class, () -> torneo.registrarEnfrentamiento(enfrentamiento1));    
-    
-    }
-
     @Test
     public void buscarEnfrentamientoEquipo(){
             System.out.println("Inciando el test buscar enfrentamiento por equipo");

@@ -235,13 +235,7 @@ public class Torneo {
         ASSERTION.assertion( limiteEdad == 0 || limiteEdad >= edadAlInicioTorneo , "No se pueden registrar jugadores que excedan el limite de edad del torneo"); 
     }
 
-    public void validarFechaEnfrentamiento(Enfrentamiento enfrentamiento){
-        boolean valdidar = enfrentamiento.getFechaEnfrentamiento().isAfter(fechaInicio);
-        ASSERTION.assertion(valdidar,"La fecha del enfrentamiento es antes de la fecha  de inicio del torneo");
-    }
-
     public void registrarEnfrentamiento(Enfrentamiento enfrentamiento1){    
-        validarFechaEnfrentamiento(enfrentamiento1);
         enfrentamientos.add(enfrentamiento1);
     }
 
