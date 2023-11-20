@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class Enfrentamiento{
     private final String nombre;
@@ -117,7 +119,18 @@ public class Enfrentamiento{
 
     public void registrarJuez(Juez juez){
         assert juez != null;
+        validarJuez(juez);
         jueces.add(juez);
+    }
+
+    public Optional<Juez> buscarJuez(Juez juez){
+        Predicate<Juez> condicion = j->j.licencia().equals(juez.licencia());
+        return jueces.stream().filter(condicion).findAny();
+    }
+
+    public void validarJuez(Juez juez){
+        boolean juezEncontrar = buscarJuez(juez).isPresent();
+        ASSERTION.assertion(!juezEncontrar,"Juez con misma licencia encontrado");
     }
 
     public void setResultado(byte puntosEquipoLocal, byte puntosEquipoVisitante){
